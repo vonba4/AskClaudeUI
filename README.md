@@ -1,2 +1,2 @@
 # ClaudeCodeUI
-UI to use Claude Code via the API
+UI to use Claude via the API
