@@ -15,26 +15,33 @@ app = FastAPI()
 async def prompt(request: Request):
     data = await request.json()
     user_prompt = data.get("prompt", "")
-    # Replace with the actual Claude Code API endpoint and payload structure
     response = requests.post(
         "https://api.anthropic.com/v1/messages",
         headers={
             "x-api-key": API_KEY,
+            "anthropic-version": "2023-06-01",
             "content-type": "application/json"
         },
         json={
             "model": MODEL,
+            "max_tokens": 1024,
             "messages": [{"role": "user", "content": user_prompt}]
         }
     )
-    return JSONResponse(content=response.json())
+    # Extract the content text field from the response
+    resp_json = response.json()
+    content_text = ""
+    if "content" in resp_json and isinstance(resp_json["content"], list):
+        # Claude API returns a list of content blocks
+        content_text = "".join([block.get("text", "") for block in resp_json["content"]])
+    return JSONResponse(content={"content": content_text})
 
 @app.get("/", response_class=HTMLResponse)
 def index():
     return """
     <html>
       <body>
-        <h1>Claude Code UI</h1>
+        <h1>Ask Claude UI</h1>
         <form id="promptForm">
           <textarea name="prompt" rows="4" cols="50"></textarea><br>
           <button type="submit">Submit</button>
@@ -50,7 +57,7 @@ def index():
               body: JSON.stringify({prompt})
             });
             const data = await res.json();
-            document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+            document.getElementById('result').textContent = data.content || "No response";
           }
         </script>
       </body>
