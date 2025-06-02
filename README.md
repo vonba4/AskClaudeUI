@@ -3,7 +3,7 @@ UI to use Ask Claude via the API
 
 ## Description
 
-AskClaudeUI is a simple web application that allows users to interact with the Ask Claude API (Anthropic Claude) through a user-friendly interface. The application consists of a Python FastAPI backend and a minimal HTML frontend.
+AskClaudeUI is a simple web application that allows users to interact with the Ask Claude API (Anthropic Claude) through a minimalist user interface. The application consists of a Python FastAPI backend and a lightweight HTML frontend.
 
 ## Functionality
 
