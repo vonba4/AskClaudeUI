@@ -75,7 +75,9 @@ def index():
           <textarea name="prompt" rows="4" cols="50"></textarea><br>
           <button type="submit">Submit</button>
         </form>
-        <pre id="result"></pre>
+        <br>
+        <label for="result">Result:</label><br>
+        <textarea id="result" rows="10" cols="80" readonly></textarea>
         <script>
           async function loadModels() {
             const res = await fetch('/models');
@@ -100,6 +102,8 @@ def index():
           }
           document.getElementById('promptForm').onsubmit = async function(e) {
             e.preventDefault();
+            const resultElem = document.getElementById('result');
+            resultElem.value = "Processing...";
             const prompt = this.prompt.value;
             const res = await fetch('/prompt', {
               method: 'POST',
@@ -107,7 +111,7 @@ def index():
               body: JSON.stringify({prompt})
             });
             const data = await res.json();
-            document.getElementById('result').textContent = data.content || "No response";
+            resultElem.value = data.content || "No response";
           }
           loadModels();
         </script>
