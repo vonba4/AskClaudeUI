@@ -8,7 +8,9 @@ with open("config.json") as f:
 
 API_KEY = config["api_key"]
 MODEL = config["model"]
-INSTRUCTION = config.get("instruction", "")  # Get instruction from config
+INSTRUCTION = config.get("instruction", "")
+TEMPERATURE = config.get("temperature", 1.0)  # Default to 1.0 if not set
+
 print(f"Using model: {MODEL} with instruction: {INSTRUCTION}")
 
 app = FastAPI()
@@ -56,6 +58,7 @@ async def prompt(request: Request):
         json={
             "model": MODEL,
             "max_tokens": 1024,
+            "temperature": TEMPERATURE,
             "messages": [{"role": "user", "content": full_prompt}]
         }
     )
@@ -76,6 +79,10 @@ def index():
         <form id="promptForm">
           <label for="modelSelect">Model:</label>
           <select id="modelSelect" name="model"></select>
+          <br><br>
+          <label for="temperatureInput">Temperature:</label>
+          <input type="number" id="temperatureInput" name="temperature" min="0" max="2" step="0.01" value="{TEMPERATURE}"/>
+          <button type="button" id="saveTemperatureBtn">Save Temperature</button>
           <br><br>
           <label for="instructionInput">Instruction:</label>
           <textarea id="instructionInput" name="instruction" rows="3" cols="80">{INSTRUCTION}</textarea>
@@ -117,6 +124,14 @@ def index():
               body: JSON.stringify({{instruction}})
             }});
           }};
+          document.getElementById('saveTemperatureBtn').onclick = async function() {{
+            const temperature = parseFloat(document.getElementById('temperatureInput').value);
+            await fetch('/set_temperature', {{
+              method: 'POST',
+              headers: {{'Content-Type': 'application/json'}},
+              body: JSON.stringify({{temperature}})
+            }});
+          }};
           document.getElementById('promptForm').onsubmit = async function(e) {{
             e.preventDefault();
             const resultElem = document.getElementById('result');
@@ -136,7 +151,6 @@ def index():
     </html>
     """
 
-# Add this endpoint to handle instruction updates
 @app.post("/set_instruction")
 async def set_instruction(request: Request):
     data = await request.json()
@@ -148,4 +162,17 @@ async def set_instruction(request: Request):
         global INSTRUCTION
         INSTRUCTION = new_instruction
         return JSONResponse(content={"success": True, "instruction": new_instruction})
+    return JSONResponse(content={"success": False}, status_code=400)
+
+@app.post("/set_temperature")
+async def set_temperature(request: Request):
+    data = await request.json()
+    new_temperature = data.get("temperature")
+    if new_temperature is not None:
+        config["temperature"] = new_temperature
+        with open("config.json", "w") as f:
+            json.dump(config, f, indent=2)
+        global TEMPERATURE
+        TEMPERATURE = new_temperature
+        return JSONResponse(content={"success": True, "temperature": new_temperature})
     return JSONResponse(content={"success": False}, status_code=400)
