@@ -69,13 +69,18 @@ async def prompt(request: Request):
 
 @app.get("/", response_class=HTMLResponse)
 def index():
-    return """
+    return f"""
     <html>
       <body>
         <h1>Ask Claude UI</h1>
         <form id="promptForm">
           <label for="modelSelect">Model:</label>
-          <select id="modelSelect" name="model"></select><br><br>
+          <select id="modelSelect" name="model"></select>
+          <br><br>
+          <label for="instructionInput">Instruction:</label>
+          <textarea id="instructionInput" name="instruction" rows="3" cols="80">{INSTRUCTION}</textarea>
+          <button type="button" id="saveInstructionBtn">Save Instruction</button>
+          <br><br>
           <textarea name="prompt" rows="4" cols="50"></textarea><br>
           <button type="submit">Submit</button>
         </form>
@@ -83,42 +88,64 @@ def index():
         <label for="result">Result:</label><br>
         <textarea id="result" rows="10" cols="80" readonly></textarea>
         <script>
-          async function loadModels() {
+          async function loadModels() {{
             const res = await fetch('/models');
             const data = await res.json();
             const select = document.getElementById('modelSelect');
             select.innerHTML = '';
-            data.models.forEach(model => {
+            data.models.forEach(model => {{
               const opt = document.createElement('option');
               opt.value = model;
               opt.textContent = model;
               if (model === data.selected) opt.selected = true;
               select.appendChild(opt);
-            });
-          }
-          document.getElementById('modelSelect').onchange = async function() {
+            }});
+          }}
+          document.getElementById('modelSelect').onchange = async function() {{
             const model = this.value;
-            await fetch('/set_model', {
+            await fetch('/set_model', {{
               method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({model})
-            });
-          }
-          document.getElementById('promptForm').onsubmit = async function(e) {
+              headers: {{'Content-Type': 'application/json'}},
+              body: JSON.stringify({{model}})
+            }});
+          }}
+          document.getElementById('saveInstructionBtn').onclick = async function() {{
+            const instruction = document.getElementById('instructionInput').value;
+            await fetch('/set_instruction', {{
+              method: 'POST',
+              headers: {{'Content-Type': 'application/json'}},
+              body: JSON.stringify({{instruction}})
+            }});
+          }};
+          document.getElementById('promptForm').onsubmit = async function(e) {{
             e.preventDefault();
             const resultElem = document.getElementById('result');
             resultElem.value = "Processing...";
             const prompt = this.prompt.value;
-            const res = await fetch('/prompt', {
+            const res = await fetch('/prompt', {{
               method: 'POST',
-              headers: {'Content-Type': 'application/json'},
-              body: JSON.stringify({prompt})
-            });
+              headers: {{'Content-Type': 'application/json'}},
+              body: JSON.stringify({{prompt}})
+            }});
             const data = await res.json();
             resultElem.value = data.content || "No response";
-          }
+          }}
           loadModels();
         </script>
       </body>
     </html>
     """
+
+# Add this endpoint to handle instruction updates
+@app.post("/set_instruction")
+async def set_instruction(request: Request):
+    data = await request.json()
+    new_instruction = data.get("instruction")
+    if new_instruction is not None:
+        config["instruction"] = new_instruction
+        with open("config.json", "w") as f:
+            json.dump(config, f, indent=2)
+        global INSTRUCTION
+        INSTRUCTION = new_instruction
+        return JSONResponse(content={"success": True, "instruction": new_instruction})
+    return JSONResponse(content={"success": False}, status_code=400)
