@@ -81,13 +81,14 @@ def index():
           <select id="modelSelect" name="model"></select>
           <br><br>
           <label for="temperatureInput">Temperature:</label>
-          <input type="number" id="temperatureInput" name="temperature" min="0" max="2" step="0.01" value="{TEMPERATURE}"/>
+          <input type="number" id="temperatureInput" name="temperature" min="0" max="1" step="0.01" value="{TEMPERATURE}"/>
           <button type="button" id="saveTemperatureBtn">Save Temperature</button>
           <br><br>
           <label for="instructionInput">Instruction:</label>
           <textarea id="instructionInput" name="instruction" rows="3" cols="80">{INSTRUCTION}</textarea>
           <button type="button" id="saveInstructionBtn">Save Instruction</button>
           <br><br>
+          <label for="prompt">Prompt:</label><br>
           <textarea name="prompt" rows="4" cols="50"></textarea><br>
           <button type="submit">Submit</button>
         </form>
@@ -126,6 +127,10 @@ def index():
           }};
           document.getElementById('saveTemperatureBtn').onclick = async function() {{
             const temperature = parseFloat(document.getElementById('temperatureInput').value);
+            if (isNaN(temperature) || temperature < 0 || temperature > 1.0) {{
+              alert("Temperature must be between 0 and 1.0");
+              return;
+            }}
             await fetch('/set_temperature', {{
               method: 'POST',
               headers: {{'Content-Type': 'application/json'}},
