@@ -74,27 +74,116 @@ async def prompt(request: Request):
 def index():
     return f"""
     <html>
+      <head>
+        <style>
+          body {{
+            font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+            background: #f7f7fa;
+            color: #222;
+            margin: 0;
+            padding: 0;
+          }}
+          .container {{
+            max-width: 700px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            padding: 32px 40px 32px 40px;
+          }}
+          h1 {{
+            text-align: center;
+            margin-bottom: 32px;
+            font-weight: 600;
+            letter-spacing: 1px;
+          }}
+          form {{
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+          }}
+          label {{
+            font-weight: 500;
+            margin-bottom: 6px;
+          }}
+          select, input[type="number"], textarea {{
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 8px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            margin-bottom: 0;
+            background: #fafbfc;
+            resize: vertical;
+          }}
+          textarea[readonly] {{
+            background: #f3f3f3;
+            color: #444;
+          }}
+          button {{
+            font-family: inherit;
+            font-size: 1rem;
+            padding: 8px 18px;
+            border-radius: 6px;
+            border: none;
+            background: #4f8cff;
+            color: #fff;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 4px;
+            transition: background 0.2s;
+          }}
+          button[type="button"] {{
+            background: #e0e7ff;
+            color: #2d3a5a;
+            margin-left: 8px;
+          }}
+          button:hover {{
+            background: #2563eb;
+            color: #fff;
+          }}
+          .row {{
+            display: flex;
+            align-items: center;
+            gap: 16px;
+          }}
+          .row label {{
+            min-width: 120px;
+            margin-bottom: 0;
+          }}
+          .full-width {{
+            width: 100%;
+          }}
+        </style>
+      </head>
       <body>
-        <h1>Ask Claude UI</h1>
-        <form id="promptForm">
-          <label for="modelSelect">Model:</label>
-          <select id="modelSelect" name="model"></select>
-          <br><br>
-          <label for="temperatureInput">Temperature:</label>
-          <input type="number" id="temperatureInput" name="temperature" min="0" max="1" step="0.01" value="{TEMPERATURE}"/>
-          <button type="button" id="saveTemperatureBtn">Save Temperature</button>
-          <br><br>
-          <label for="instructionInput">Instruction:</label>
-          <textarea id="instructionInput" name="instruction" rows="3" cols="80">{INSTRUCTION}</textarea>
-          <button type="button" id="saveInstructionBtn">Save Instruction</button>
-          <br><br>
-          <label for="prompt">Prompt:</label><br>
-          <textarea name="prompt" rows="4" cols="50"></textarea><br>
-          <button type="submit">Submit</button>
-        </form>
-        <br>
-        <label for="result">Result:</label><br>
-        <textarea id="result" rows="10" cols="80" readonly></textarea>
+        <div class="container">
+          <h1>Ask Claude UI</h1>
+          <form id="promptForm">
+            <div class="row">
+              <label for="modelSelect">Model:</label>
+              <select id="modelSelect" name="model" class="full-width"></select>
+            </div>
+            <div class="row">
+              <label for="temperatureInput">Temperature:</label>
+              <input type="number" id="temperatureInput" name="temperature" min="0" max="1" step="0.01" value="{TEMPERATURE}" style="width:100px"/>
+              <button type="button" id="saveTemperatureBtn">Save Temperature</button>
+            </div>
+            <div class="row">
+              <label for="instructionInput">Instruction:</label>
+              <textarea id="instructionInput" name="instruction" rows="3" cols="60" class="full-width">{INSTRUCTION}</textarea>
+              <button type="button" id="saveInstructionBtn">Save Instruction</button>
+            </div>
+            <div>
+              <label for="prompt">Prompt:</label><br>
+              <textarea name="prompt" rows="4" cols="50" class="full-width"></textarea>
+            </div>
+            <button type="submit">Submit</button>
+          </form>
+          <br>
+          <label for="result">Result:</label><br>
+          <textarea id="result" rows="10" cols="80" class="full-width" readonly></textarea>
+        </div>
         <script>
           async function loadModels() {{
             const res = await fetch('/models');

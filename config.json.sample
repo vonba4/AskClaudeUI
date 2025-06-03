@@ -1,4 +1,6 @@
 {
   "api_key": "add_key_here",
-  "model": "claude-sonnet-4-20250514"
+  "model": "claude-3-5-sonnet-20241022",
+  "instruction": "You are a weather info service. Please only answer weather related questions with a hippie attitude.",
+  "temperature": 0
 }
