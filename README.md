@@ -34,4 +34,4 @@ AskClaudeUI is a simple web application that allows users to interact with the A
 5. The frontend displays the answer to the user in a text box.
 6. Users can select a different Claude model from the dropdown, which updates the backend configuration.
 
-This application provides a quick and easy way to interact with the Ask Claude API from your browser.
+This application provides a quick and easy way to interact with the Ask Claude API from your browser. Start web server in in VS code: uvicorn main:app --reload --port 8080 and access in browser via localhost:8080.

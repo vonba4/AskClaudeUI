@@ -8,6 +8,8 @@ with open("config.json") as f:
 
 API_KEY = config["api_key"]
 MODEL = config["model"]
+INSTRUCTION = config.get("instruction", "")  # Get instruction from config
+print(f"Using model: {MODEL} with instruction: {INSTRUCTION}")
 
 app = FastAPI()
 
@@ -42,6 +44,8 @@ async def set_model(request: Request):
 async def prompt(request: Request):
     data = await request.json()
     user_prompt = data.get("prompt", "")
+    # Prepend instruction if set
+    full_prompt = f"{INSTRUCTION}\n{user_prompt}" if INSTRUCTION else user_prompt
     response = requests.post(
         "https://api.anthropic.com/v1/messages",
         headers={
@@ -52,7 +56,7 @@ async def prompt(request: Request):
         json={
             "model": MODEL,
             "max_tokens": 1024,
-            "messages": [{"role": "user", "content": user_prompt}]
+            "messages": [{"role": "user", "content": full_prompt}]
         }
     )
     # Extract the content text field from the response
