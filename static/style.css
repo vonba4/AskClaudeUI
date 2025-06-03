@@ -1,0 +1,78 @@
+body {
+  font-family: 'Segoe UI', 'Roboto', 'Arial', sans-serif;
+  background: #f7f7fa;
+  color: #222;
+  margin: 0;
+  padding: 0;
+}
+.container {
+  max-width: 700px;
+  margin: 40px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+  padding: 32px 40px 32px 40px;
+}
+h1 {
+  text-align: center;
+  margin-bottom: 32px;
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+label {
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+select, input[type="number"], textarea {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  margin-bottom: 0;
+  background: #fafbfc;
+  resize: vertical;
+}
+textarea[readonly] {
+  background: #f3f3f3;
+  color: #444;
+}
+button {
+  font-family: inherit;
+  font-size: 1rem;
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: none;
+  background: #4f8cff;
+  color: #fff;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 4px;
+  transition: background 0.2s;
+}
+button[type="button"] {
+  background: #e0e7ff;
+  color: #2d3a5a;
+  margin-left: 8px;
+}
+button:hover {
+  background: #2563eb;
+  color: #fff;
+}
+.row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.row label {
+  min-width: 120px;
+  margin-bottom: 0;
+}
+.full-width {
+  width: 100%;
+}

@@ -193,3 +193,4 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 config.json
+cfg/config.json
